@@ -125,13 +125,17 @@ fact allDistinctSurroundings {
 	all s1:Surroundings | all s2:Surroundings-s1 | (s1.north != s2.north) || (s1.east != s2.east) || (s1.west!= s2.west) || (s1.south!= s2.south)  
 }
 
+fact preventInaccessibleRule{
+	all r:Rule | some r2:Rule | r.state!=0 => r.state != r2.state && r2.next.state = r.state
+}
+
 /************ Predicates ************/
 
 /**
   * Force to use at least 2 different state numbers
   */
 pred cardState2 {
-	all r:Rule | some r2:Rule | r.state != r2.state 
+	all r1:Rule | some r2:Rule | r1.state != r2.state 
 }
 
 /**
@@ -140,8 +144,10 @@ pred cardState2 {
 pred check_allDistinctSurroundings {
 	some s1:Surroundings | some s2:Surroundings-s1 | (s1.north = s2.north) && (s1.east = s2.east) && (s1.west= s2.west) && (s1.south= s2.south)
 }
+
+
 run {
 //#Surroundings > 3
-#Rule = 2
+#Rule = 3
 //check_allDistinctSurroundings
-} for 2
+} for 2 but 3 Rule
