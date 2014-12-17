@@ -1,4 +1,6 @@
 open util/boolean
+//Use this if you can't import boolean:
+//enum Bool {True, False}
 
 /**
   * Define a rule that Picobot applies 
@@ -77,7 +79,7 @@ fact consistentStateNumbers {
   * No Surroundings where Picobot is stucked
   */
 fact neverStucked {
-	not some s:Surroundings | s.north = True && s.east = True && s.west = True && s.south = True
+	no s:Surroundings | s.north = True && s.east = True && s.west = True && s.south = True
 }
 
 /**
@@ -105,7 +107,7 @@ fact allSurroundingsHaveRule {
   * Two Rules can't have same state number and Surroundings
   */
 fact incompatibleRule {
-	all r1,r2:Rule | ((r1.state = r2.state) && (r1 != r2)) => r1.env != r2.env 
+	all r1: Rule | all r2:Rule-r1 | r1.state = r2.state => r1.env != r2.env 
 }
 
 /**
@@ -113,7 +115,7 @@ fact incompatibleRule {
   */
 fact noMoveIntoAWall {
 	all r:Rule | r.env.north = True => r.next.move != N
-	all r:Rule | r.env.east= True => r.next.move != E
+	all r:Rule | r.env.east = True => r.next.move != E
 	all r:Rule | r.env.west = True => r.next.move != W
 	all r:Rule | r.env.south = True => r.next.move != S
 }
@@ -125,8 +127,11 @@ fact allDistinctSurroundings {
 	all s1:Surroundings | all s2:Surroundings-s1 | (s1.north != s2.north) || (s1.east != s2.east) || (s1.west!= s2.west) || (s1.south!= s2.south)  
 }
 
-fact preventInaccessibleRule{
-	all r:Rule | some r2:Rule | r.state!=0 => r.state != r2.state && r2.next.state = r.state
+/**
+  * Limit number of inaccesible rules
+  */
+fact preventInaccessibleRule {
+	all r1:Rule | some r2:Rule | r1.state!=0 => r1.state != r2.state && r2.next.state = r1.state
 }
 
 /************ Predicates ************/
@@ -139,6 +144,13 @@ pred cardState2 {
 }
 
 /**
+  * Force to use at least 3 different state numbers
+  */
+pred cardState3 {
+	all r1:Rule | some r2,r3:Rule | r1.state != r2.state && r2.state != r3.state && r3.state != r1.state
+}
+
+/**
   * Test that allDistinctSurroundings works correctly
   */
 pred check_allDistinctSurroundings {
@@ -147,7 +159,7 @@ pred check_allDistinctSurroundings {
 
 
 run {
-//#Surroundings > 3
 #Rule = 3
+cardState3
 //check_allDistinctSurroundings
-} for 2 but 3 Rule
+} for 3
