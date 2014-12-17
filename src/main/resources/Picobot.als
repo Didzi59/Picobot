@@ -108,6 +108,23 @@ fact incompatibleRule {
 	all r1,r2:Rule | ((r1.state = r2.state) && (r1 != r2)) => r1.env != r2.env 
 }
 
+/**
+  * No rule leads into a wall
+  */
+fact noMoveIntoAWall {
+	all r:Rule | r.env.north = True => r.next.move != N
+	all r:Rule | r.env.east= True => r.next.move != E
+	all r:Rule | r.env.west = True => r.next.move != W
+	all r:Rule | r.env.south = True => r.next.move != S
+}
+
+/**
+  * Every Surroundings are different
+  */
+fact allDistinctSurroundings {
+	all s1:Surroundings | all s2:Surroundings-s1 | (s1.north != s2.north) || (s1.east != s2.east) || (s1.west!= s2.west) || (s1.south!= s2.south)  
+}
+
 /************ Predicates ************/
 
 /**
@@ -117,7 +134,14 @@ pred cardState2 {
 	all r:Rule | some r2:Rule | r.state != r2.state 
 }
 
+/**
+  * Test that allDistinctSurroundings works correctly
+  */
+pred check_allDistinctSurroundings {
+	some s1:Surroundings | some s2:Surroundings-s1 | (s1.north = s2.north) && (s1.east = s2.east) && (s1.west= s2.west) && (s1.south= s2.south)
+}
 run {
 //#Surroundings > 3
 #Rule = 2
+//check_allDistinctSurroundings
 } for 2
