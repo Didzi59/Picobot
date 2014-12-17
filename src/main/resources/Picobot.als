@@ -1,5 +1,21 @@
 open util/boolean
 
+/**
+  * Define a rule that Picobot applies 
+  * state: Picobot's current state
+  * env: Surroundings of Picobot
+  * next: Action to apply
+  */
+sig Rule {
+	state: Int,
+	env: Surroundings,
+	next: Action
+}
+
+/**
+  * Define surroundings of Picobot 
+  * True means that Picobot can't move towards that direction, False that it can
+  */
 sig Surroundings {
 	north: Bool,
 	east: Bool,
@@ -7,59 +23,101 @@ sig Surroundings {
 	south: Bool
 }
 
-sig Rule {
-	state: Int,
-	sur: Surroundings,
-	next: Action
-}
-
-abstract sig Move{}
-one sig N, E, W, S, X extends Move{}
-
+/**
+  * Define Picobot's action to apply 
+  * state: new state once action is performed
+  * move: Picobot's move to perform
+  */
 sig Action {
 	state: Int,
 	move: Move
 }
 
+/**
+  * Define a move following a compass direction (North, East, West, South) or no move (X)
+  */
+abstract sig Move{}
+one sig N, E, W, S, X extends Move{}
+
+/************ Facts ************/
+
+
+/**
+  * All state numbers are between 0 and 99
+  */
 fact validState {
 	all r:Rule | r.state >=0 && r.state < 100
 	all a:Action | a.state >= 0 && a.state < 100
 }
 
+/**
+  * At least one rule starts in state 0
+  */
 fact initialState {
 	some r:Rule | r.state=0
 }
 
-fact neverStucked {
-	not some s:Surroundings | s.north = True && s.east = True && s.west = True && s.south = True
+/**
+  * Rules and Actions use consecutive state numbers
+  */
+fact consecutiveStateNumbers {
+	all r1:Rule | some r2:Rule | r1.state !=0 => r1.state.minus[1] = r2.state 
+	all a1:Action | some a2:Action | a1.state !=0 => a1.state.minus[1] = a2.state 
 }
 
-fact allActionsHaveRule {
-	all a:Action | some r:Rule | r.next = a
-}
-
-fact stateNumber {
-	all r:Rule | some r2:Rule | r.state !=0 => r.state.minus[1] = r2.state 
-	all a:Action | some a2:Action | a.state !=0 => a.state.minus[1] = a2.state 
+/**
+  * No dead-end state number
+  */
+fact consistentStateNumbers {
 	all a:Action | some r:Rule | a.state = r.state 
 	all r:Rule | some a:Action | a.state = r.state 
 }
 
-pred sameAction {
-	some r1,r2:Rule | r1.next = r2.next && r1 != r2
+/**
+  * No Surroundings where Picobot is stucked
+  */
+fact neverStucked {
+	not some s:Surroundings | s.north = True && s.east = True && s.west = True && s.south = True
 }
 
+/**
+  * No Rule can ask to hold still without changing current state number
+  */
 fact neverHoldStill {
 	all r:Rule | r.next.move = X => r.next.state != r.state
 }
 
-/*
-fact cardState2 {
+/**
+  * Every Action is linked to a Rule
+  */
+fact allActionsHaveRule {
+	all a:Action | some r:Rule | r.next = a
+}
+
+/**
+  * Every Surroundings are linked to a Rule
+  */
+fact allSurroundingsHaveRule {
+	all s:Surroundings | some r:Rule | r.env = s
+}
+
+/**
+  * Two Rules can't have same state number and Surroundings
+  */
+fact incompatibleRule {
+	all r1,r2:Rule | ((r1.state = r2.state) && (r1 != r2)) => r1.env != r2.env 
+}
+
+/************ Predicates ************/
+
+/**
+  * Force to use at least 2 different state numbers
+  */
+pred cardState2 {
 	all r:Rule | some r2:Rule | r.state != r2.state 
 }
-*/
 
 run {
 //#Surroundings > 3
-//sameAction
-} for 5
+#Rule = 2
+} for 2
