@@ -1,37 +1,33 @@
-open util/boolean
-//Use this if you can't import boolean:
-//enum Bool {True, False}
-
 /**
-  * Define a rule that Picobot applies 
+  * Defines a rule that Picobot applies
   * state: Picobot's current state
   * env: Surroundings of Picobot
   * next: Action to apply
   */
 sig Rule {
-	state: Int,
+	current_state: Int,
 	env: Surroundings,
 	next: Action
 }
 
 /**
-  * Define surroundings of Picobot 
+  * Defines surroundings of Picobot
   * True means that Picobot can't move towards that direction, False that it can
   */
 sig Surroundings {
-	north: Bool,
-	east: Bool,
-	west: Bool,
-	south: Bool
+	north: EnvironmentInfo,
+	east: EnvironmentInfo,
+	west: EnvironmentInfo,
+	south: EnvironmentInfo
 }
 
 /**
-  * Define Picobot's action to apply 
+  * Defines Picobot's action to apply
   * state: new state once action is performed
   * move: Picobot's move to perform
   */
 sig Action {
-	state: Int,
+	next_state: Int,
 	move: Move
 }
 
@@ -41,52 +37,90 @@ sig Action {
 abstract sig Move{}
 one sig N, E, W, S, X extends Move{}
 
-/************ Facts ************/
+/**
+  * Define Picobot's environment information where :
+  *		+ dN refers to north direction blocked
+  *		+ dE refers to east direction blocked
+  *		+ dW refers to west direction blocked
+  *		+ dS refers to south direction blocked
+  *		+ dX refers to a direction where Picobot is stuck or not doesn't matter
+  */
+abstract sig EnvironmentInfo{}
+one sig dX, dN, dE, dW, dS extends EnvironmentInfo{}
 
+
+/************ Facts ************/
+/**
+  * The north direction for every surroundings can only contain values dN and dX
+  */
+fact validNorthDirectionSurroundings {
+	all s : Surroundings | s.north = dN || s.north = dX
+}
+
+/**
+  * The east direction for every surroundings can only contain values dE and dX
+  */
+fact validEastDirectionSurroundings {
+	all s : Surroundings | s.east = dE || s.east = dX
+}
+
+/**
+  * The west direction for every surroundings can only contain values dW and dX
+  */
+fact validWestDirectionSurroundings {
+	all s : Surroundings | s.west = dW || s.west = dX
+}
+
+/**
+  * The south direction for every surroundings can only contain values dS and dX
+  */
+fact validSouthDirectionSurroundings {
+	all s : Surroundings | s.south = dS || s.south = dX
+}
 
 /**
   * All state numbers are between 0 and 99
   */
 fact validState {
-	all r:Rule | r.state >=0 && r.state < 100
-	all a:Action | a.state >= 0 && a.state < 100
+	all r:Rule | r.current_state >=0 && r.current_state < 100
+	all a:Action | a.next_state >= 0 && a.next_state < 100
 }
 
 /**
   * At least one rule starts in state 0
   */
 fact initialState {
-	some r:Rule | r.state=0
+	some r:Rule | r.current_state=0
 }
 
 /**
   * Rules and Actions use consecutive state numbers
   */
 fact consecutiveStateNumbers {
-	all r1:Rule | some r2:Rule | r1.state !=0 => r1.state.minus[1] = r2.state 
-	all a1:Action | some a2:Action | a1.state !=0 => a1.state.minus[1] = a2.state 
+	all r1:Rule | some r2:Rule | r1.current_state !=0 => r1.current_state.minus[1] = r2.current_state 
+	all a1:Action | some a2:Action | a1.next_state !=0 => a1.next_state.minus[1] = a2.next_state 
 }
 
 /**
   * No dead-end state number
   */
 fact consistentStateNumbers {
-	all a:Action | some r:Rule | a.state = r.state 
-	all r:Rule | some a:Action | a.state = r.state 
+	all a:Action | some r:Rule | a.next_state = r.current_state 
+	all r:Rule | some a:Action | a.next_state = r.current_state 
 }
 
 /**
-  * No Surroundings where Picobot is stucked
+  * No Surroundings where Picobot is stuck
   */
-fact neverStucked {
-	no s:Surroundings | s.north = True && s.east = True && s.west = True && s.south = True
+fact neverStuck {
+	no s:Surroundings | s.north = dN && s.east = dE && s.west = dW && s.south = dS
 }
 
 /**
   * No Rule can ask to hold still without changing current state number
   */
 fact neverHoldStill {
-	all r:Rule | r.next.move = X => r.next.state != r.state
+	all r:Rule | r.next.move = X => r.next.next_state != r.current_state
 }
 
 /**
@@ -107,17 +141,17 @@ fact allSurroundingsHaveRule {
   * Two Rules can't have same state number and Surroundings
   */
 fact incompatibleRule {
-	all r1: Rule | all r2:Rule-r1 | r1.state = r2.state => r1.env != r2.env 
+	all r1: Rule | all r2:Rule-r1 | r1.current_state = r2.current_state => r1.env != r2.env 
 }
 
 /**
   * No rule leads into a wall
   */
 fact noMoveIntoAWall {
-	all r:Rule | r.env.north = True => r.next.move != N
-	all r:Rule | r.env.east = True => r.next.move != E
-	all r:Rule | r.env.west = True => r.next.move != W
-	all r:Rule | r.env.south = True => r.next.move != S
+	all r:Rule | r.env.north = dN => r.next.move != N
+	all r:Rule | r.env.east = dE => r.next.move != E
+	all r:Rule | r.env.west = dW => r.next.move != W
+	all r:Rule | r.env.south = dS => r.next.move != S
 }
 
 /**
@@ -128,11 +162,12 @@ fact allDistinctSurroundings {
 }
 
 /**
-  * Limit number of inaccesible rules
+  * Limit number of inaccessible rules
   */
 fact preventInaccessibleRule {
-	all r1:Rule | some r2:Rule | r1.state!=0 => r1.state != r2.state && r2.next.state = r1.state
+	all r1:Rule | some r2:Rule | r1.current_state!=0 => r1.current_state != r2.current_state && r2.next.next_state = r1.current_state
 }
+
 
 /************ Predicates ************/
 
@@ -140,14 +175,14 @@ fact preventInaccessibleRule {
   * Force to use at least 2 different state numbers
   */
 pred cardState2 {
-	all r1:Rule | some r2:Rule | r1.state != r2.state 
+	all r1:Rule | some r2:Rule | r1.current_state != r2.current_state 
 }
 
 /**
   * Force to use at least 3 different state numbers
   */
 pred cardState3 {
-	all r1:Rule | some r2,r3:Rule | r1.state != r2.state && r2.state != r3.state && r3.state != r1.state
+	all r1:Rule | some r2,r3:Rule | r1.current_state != r2.current_state && r2.current_state != r3.current_state && r3.current_state != r1.current_state
 }
 
 /**
