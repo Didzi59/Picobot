@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<alloy>
+
+<view>
+
+<defaultnode/>
+
+<defaultedge/>
+
+<node>
+   <type name="E"/>
+   <type name="False"/>
+   <type name="Int"/>
+   <type name="N"/>
+   <type name="S"/>
+   <type name="Star"/>
+   <type name="String"/>
+   <type name="True"/>
+   <type name="univ"/>
+   <type name="W"/>
+   <type name="X"/>
+   <type name="ordering/Ord"/>
+   <type name="seq/Int"/>
+</node>
+
+<node color="Blue">
+   <type name="Rule"/>
+</node>
+
+<node color="Green">
+   <type name="Surroundings"/>
+</node>
+
+<node color="Red">
+   <type name="Action"/>
+</node>
+
+<node label="$start">
+   <set name="$r" type="Rule"/>
+</node>
+
+<node showlabel="no">
+   <set name="$a" type="Action"/>
+</node>
+
+<node visible="no">
+   <type name="Bool"/>
+   <type name="Move"/>
+</node>
+
+<edge attribute="no">
+   <relation name="env"> <type name="Rule"/> <type name="Surroundings"/> </relation>
+</edge>
+
+<edge visible="no">
+   <relation name="$a&apos;"> <type name="Rule"/> <type name="Action"/> </relation>
+   <relation name="$a2"> <type name="Action"/> <type name="Action"/> </relation>
+   <relation name="$r&apos;"> <type name="Action"/> <type name="Rule"/> </relation>
+   <relation name="$r&apos;&apos;"> <type name="Action"/> <type name="Rule"/> </relation>
+   <relation name="$r&apos;&apos;&apos;"> <type name="Surroundings"/> <type name="Rule"/> </relation>
+   <relation name="$r2"> <type name="Rule"/> <type name="Rule"/> </relation>
+   <relation name="$r2&apos;"> <type name="Rule"/> <type name="Rule"/> </relation>
+</edge>
+
+<edge visible="no" attribute="yes">
+   <relation name="move"> <type name="Action"/> <type name="Move"/> </relation>
+</edge>
+
+<edge visible="no" attribute="yes" label="E">
+   <relation name="east"> <type name="Surroundings"/> <type name="Bool"/> </relation>
+</edge>
+
+<edge visible="no" attribute="yes" label="N">
+   <relation name="north"> <type name="Surroundings"/> <type name="Bool"/> </relation>
+</edge>
+
+<edge visible="no" attribute="yes" label="S">
+   <relation name="south"> <type name="Surroundings"/> <type name="Bool"/> </relation>
+</edge>
+
+<edge visible="no" attribute="yes" label="W">
+   <relation name="west"> <type name="Surroundings"/> <type name="Bool"/> </relation>
+</edge>
+
+</view>
+
+</alloy>
