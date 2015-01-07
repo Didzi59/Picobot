@@ -1,6 +1,4 @@
-open util/boolean
-//Use this if you can't import boolean:
-//enum Bool {True, False}
+enum Bool {True, False, Star}
 
 /**
   * Define a rule that Picobot applies 
@@ -43,6 +41,17 @@ one sig N, E, W, S, X extends Move{}
 
 /************ Facts ************/
 
+
+/**
+  * Every rules are compatible
+  */
+fact compatibleRules {
+	all r1: Rule | no r2:Rule-r1 | 	(r1.current_state = r2.current_state) &&
+														(r1.env.north = r2.env.north || r1.env.north = Star || r2.env.north = Star) &&
+													   	(r1.env.east = r2.env.east || r1.env.east = Star || r2.env.east = Star) &&
+													   	(r1.env.west = r2.env.west|| r1.env.west = Star || r2.env.west = Star) &&
+														(r1.env.south = r2.env.south || r1.env.south = Star || r2.env.south = Star) 
+}
 
 /**
   * All state numbers are between 0 and 99
@@ -143,10 +152,10 @@ fact noDuplicatedSurroundings {
 
 /**
   * Limit number of inaccesible rules
-  */
+  *
 fact preventInaccessibleRule {
 	all r1:Rule | some r2:Rule | r1.current_state!=0 => r1.current_state != r2.current_state && r2.next.next_state = r1.current_state
-}
+}*/
 
 /************ Predicates ************/
 
@@ -178,18 +187,7 @@ pred check_noDuplicatedSurroundings {
 	some s1:Surroundings | some s2:Surroundings-s1 | (s1.north = s2.north) && (s1.east = s2.east) && (s1.west= s2.west) && (s1.south= s2.south)
 }
 
-/**
-  * Force to use each Surroundings for each state number (NOT WORKING)
-  *
-pred forceAllSurroundings {
-	#Surroundings = 15
-	all s1:Surroundings | all s2:Surroundings-s1 | some r1:Rule | some r2:Rule | r1.current_state = r2.current_state && r1.env = s1 && r2.env = s2 
-}
-*/
 
 run {
-//#Surroundings < 16
-//#Action = 2
-//#Rule = 50
 //cardState1
-} for 10 //but 15 Surroundings, 18 Rule
+} for 20 //but 10 Surroundings, 18 Rule
