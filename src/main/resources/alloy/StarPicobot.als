@@ -76,7 +76,7 @@ fact noDuplicatedSurroundings {
   * No dead-end state number
   */
 fact consistentStateNumbers {
-	all a:Action | some r:Rule | a.next_state !=0 => a.next_state = r.current_state 
+	all a:Action | some r:Rule | a.next_state = r.current_state 
 }
 
 /**
@@ -91,10 +91,10 @@ fact allActionsHaveRule {
   */
 fact compatibleRules {
 	all r1: Rule | no r2:Rule-r1 | 	(r1.current_state = r2.current_state) &&
-														(r1.env.north = r2.env.north || r1.env.north = Star || r2.env.north = Star) &&
-													   	(r1.env.east = r2.env.east || r1.env.east = Star || r2.env.east = Star) &&
-													   	(r1.env.west = r2.env.west|| r1.env.west = Star || r2.env.west = Star) &&
-														(r1.env.south = r2.env.south || r1.env.south = Star || r2.env.south = Star) 
+													(r1.env.north = r2.env.north || r1.env.north = Star || r2.env.north = Star) &&
+													(r1.env.east = r2.env.east || r1.env.east = Star || r2.env.east = Star) &&
+													(r1.env.west = r2.env.west || r1.env.west = Star || r2.env.west = Star) &&
+													(r1.env.south = r2.env.south || r1.env.south = Star || r2.env.south = Star) 
 }
 
 /************ Predicates for Optimization ************/

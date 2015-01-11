@@ -76,7 +76,7 @@ fact noDuplicatedSurroundings {
   * No dead-end state number
   */
 fact consistentStateNumbers {
-	all a:Action | some r:Rule | a.next_state !=0 => a.next_state = r.current_state 
+	all a:Action | some r:Rule | a.next_state = r.current_state 
 }
 
 /**
