@@ -34,7 +34,7 @@ sig Action {
 /**
   * Define a move following a compass direction (North, East, West, South) or no move (X)
   */
-enum Move {N, E, W, S, X }
+enum Move {N, E, W, S, X}
 
 /**
   * Define whether there is a wall or not
@@ -42,7 +42,6 @@ enum Move {N, E, W, S, X }
 enum Wall {True, False}
 
 /************ Facts ************/
-
 
 /**
   * All state numbers are between 0 and 99
@@ -60,6 +59,20 @@ fact initialState {
 }
 
 /**
+  * Two Rules can't have same state number and Surroundings
+  */
+fact noDuplicatedRule {
+	all r1: Rule | all r2:Rule-r1 | r1.current_state = r2.current_state => r1.env != r2.env
+}
+
+/**
+  * Every Surroundings are different
+  */
+fact noDuplicatedSurroundings {
+	all s1:Surroundings | no s2:Surroundings-s1 | s1.north = s2.north && s1.east = s2.east && s1.west = s2.west && s1.south = s2.south  
+}
+
+/**
   * No dead-end state number
   */
 fact consistentStateNumbers {
@@ -73,19 +86,6 @@ fact allActionsHaveRule {
 	all a:Action | some r:Rule | r.next = a
 }
 
-/**
-  * Every Surroundings are linked to a Rule
-  */
-fact allSurroundingsHaveRule {
-	all s:Surroundings | some r:Rule | r.env = s
-}
-
-/**
-  * Two Rules can't have same state number and Surroundings
-  */
-fact noDuplicatedRule {
-	all r1: Rule | all r2:Rule-r1 | r1.current_state = r2.current_state => r1.env != r2.env 
-}
 
 /************ Predicates for Optimization ************/
 
@@ -120,11 +120,13 @@ pred preventInaccessibleRule {
 	all r1:Rule | some r2:Rule | r1.current_state!=0 => r1.current_state != r2.current_state && r2.next.next_state = r1.current_state
 }
 
+/************ Cosmectic Predicates ************/
+
 /**
-  * Every Surroundings are different
+  * Every Surroundings are linked to a Rule
   */
-pred noDuplicatedSurroundings {
-	all s1:Surroundings | no s2:Surroundings-s1 | s1.north = s2.north && s1.east = s2.east && s1.west = s2.west && s1.south = s2.south  
+pred allSurroundingsHaveRule {
+	all s:Surroundings | some r:Rule | r.env = s
 }
 
 /**
@@ -141,7 +143,7 @@ pred consecutiveStateNumbers {
 	all r1:Rule | some r2:Rule | r1.current_state != 0 => r1.current_state.minus[1] = r2.current_state 
 }
 
-/************ Other Predicates ************/
+/************ 'Number of states' Predicates ************/
 
 /**
   * Force to use only one state number
@@ -177,8 +179,8 @@ noMoveIntoAWall
 
 /*
 // Non important predicates
-noDuplicatedSurroundings
+allSurroundingsHaveRule
 noDuplicatedAction
 consecutiveStateNumbers
 */
-} for 40 //but 15 Surroundings//, 18 Rule
+} for 25 //but 15 Surroundings//, 18 Rule
