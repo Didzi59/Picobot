@@ -1,0 +1,172 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage[pdftex]{graphicx}
+\usepackage{hyperref}
+\usepackage{lipsum}
+
+\usepackage{listings}
+\usepackage{charter}
+
+% Listing Scala
+\lstdefinelanguage{scala}{
+  morekeywords={abstract,case,catch,class,def,%
+    do,else,extends,false,final,finally,%
+    for,if,implicit,import,match,mixin,%
+    new,null,object,override,package,%
+    private,protected,requires,return,sealed,%
+    super,this,throw,trait,true,try,%
+    type,val,var,while,with,yield},
+  otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[n]{/*}{*/},
+  morestring=[b]'',
+  morestring=[b]',
+  morestring=[b]"''
+}
+
+\usepackage{color}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+% Default settings for code listings
+\lstset{frame=tb,
+  language=scala,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  frame=single,
+  breaklines=true,
+  breakatwhitespace=true
+  tabsize=3
+}
+
+% 
+\begin{document}
+
+\title{Picobot}
+
+\author{PHILIPPON BOSSUT BAILLEUL}
+
+
+\maketitle
+\newpage
+\tableofcontents
+
+\newpage
+
+
+\section{Introduction}
+Picobot est un programme utilisé comme support au cours d'informatique
+du Dr. Zachary Dodds au Harvey Mudd College de Californie.
+% ajouter lien
+\\
+
+Son but est de simuler le parcours d’un robot dans un environnement
+donné en utilisant des règles dictant son comportement.
+\\
+
+Ce projet utilise le langage de spécification déclaratif Alloy pour
+générer ces règles. L'intérêt est de chercher le plus petit ensemble
+de règles qui complète le niveau, quelque soit la position initiale du
+robot.
+
+
+
+\section{Picobot}
+\subsection{Environnement}
+Un environnement est modélisé sous forme d’un tableau où le robot doit
+parcourir au moins une fois sur chaque case grâce aux règles
+pré-établies.
+Comme le robot n’est pas doté de mémoire interne alors il ne peut pas
+savoir où il se trouve. Il ne peut donc pas utiliser d’algorithmes de
+recherche de chemin (Dijkstra, A*).
+\\
+\subsection{Règles}
+Une règle est formée de la façon suivante:
+
+\textit{CurrentState Surroundings -> MovementDirection NewState}\\
+
+\begin{itemize}
+\item {\textit{CurrentState} et \textit{NewState} sont deux nombres entiers (comme 0,1,2,
+  etc).}
+\item {\textit{MovementDirection} est soit N, E, W, S, ou X. «X» signifie ``ne pas
+bouger''.\\}
+\end{itemize}
+
+Une fois ces quatre facteurs déterminés, la formule suivante est
+calculée et son résultat est sauvegardée en
+mémoire. Quand toutes les méthodes sont évaluées, l'algorithme renvoie
+la liste des dix méthodes les plus suspectes.
+
+
+
+\subsection{Exemple}
+
+\section{Résultats}
+
+
+
+\section{Conclusion}
+\newpage
+\section{Exemple Java}
+\begin{lstlisting}
+  package examples
+
+  /** This examples illustrates the use of Guarded
+  *  Algebraic Data Types in Scala. For more information
+  *  please refer to the Scala specification available
+  *  from http://scala-lang.org/docu/.
+  */
+  object gadts extends Application {
+
+    /* The syntax tree of a toy language */
+    abstract class Term[T]
+
+    /* An integer literal */
+    case class Lit(x: Int) extends Term[Int]
+
+    /* Successor of a number */
+    case class Succ(t: Term[Int]) extends Term[Int]
+
+    /* Is 't' equal to zero? */
+    case class IsZero(t: Term[Int]) extends Term[Boolean]
+
+    /* An 'if' expression. */
+    case class If[T](c: Term[Boolean],
+    t1: Term[T],
+    t2: Term[T]) extends Term[T]
+
+    /** A type-safe eval function. The right-hand sides can
+    *  make use of the fact that 'T' is a more precise type,
+    *  constraint by the pattern type.
+    */
+    def eval[T](t: Term[T]): T = t match {
+      case Lit(n)        => n
+
+      // the right hand side makes use of the fact
+      // that T = Int and so it can use '+'
+      case Succ(u)       => eval(u) + 1
+      case IsZero(u)     => eval(u) == 0
+      case If(c, u1, u2) => eval(if (eval(c)) u1 else u2)
+    }
+    println(
+    eval(If(IsZero(Lit(1)), Lit(41), Succ(Lit(41)))))
+  }
+\end{lstlisting}
+
+
+
+\end{document}
