@@ -1,6 +1,8 @@
 /************** ISimulator.java **************/
 package picobot.interfaces.core;
 
+import picobot.implementation.Cell;
+
 import java.util.Set;
 
 /** Responsible for a correct collaboration between a map and a picobot.
@@ -47,7 +49,7 @@ public interface ISimulator {
    * 
    * @return a set of (x,y) positions, e.g. { "1,1", "1,2", "2,3"}
    */
- public Set<int[]> getTraversedCells();
+ public Set<Cell> getTraversedCells();
 
  /** Returns true if the mission is completed, i.e. if all free areas
    * of the map have been traversed at least once by one picobot.

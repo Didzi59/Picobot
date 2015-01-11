@@ -48,7 +48,7 @@ public class MapBuilder implements picobot.interfaces.core.IMapBuilder {
       }
       yCoordinate--;
     }
-    System.out.println(_result);
+    //System.out.println(_result);
   }
   
   public void modify(IMap map) {

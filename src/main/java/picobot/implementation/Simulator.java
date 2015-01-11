@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import opl.iagl.alloy.picobot.SimulationPicobotException;
 import picobot.interfaces.core.IMap;
 import picobot.interfaces.core.IPicobot;
 import picobot.interfaces.core.IRule;
@@ -43,7 +44,7 @@ public class Simulator implements ISimulator {
       }        
     }
 
-    if (l.isEmpty()) throw new SimulationException("can not position the picobot, no free cell on the current map");
+    if (l.isEmpty()) throw new SimulationPicobotException("can not position the picobot, no free cell on the current map", this.getNbTraversedCells());
 
     Cell initialPosition = l.get(new Random().nextInt(l.size()));
     _picobot.setInitialPosition(initialPosition.getXCoordinate(), initialPosition.getYCoordinate());
@@ -57,7 +58,6 @@ public class Simulator implements ISimulator {
     }
   }
 
-
   public IMap getMap() {
     return _map;
   }
@@ -69,18 +69,22 @@ public class Simulator implements ISimulator {
   /** Used by the debugger UI */
   IRule lastRule = null;
     
-  public void step() {    
-     IRule rule =_picobot.getApplicableRule(_map);
-     lastRule = rule;
-     _picobot.apply(rule);
-     // convention: a cell is traversed as soon as a picobot enters it.
-     addTraversedCell(_picobot.getXCoordinate(), _picobot.getYCoordinate());
+  public void step() {
+    try {
+      IRule rule = _picobot.getApplicableRule(_map);
+      lastRule = rule;
+      _picobot.apply(rule);
+      // convention: a cell is traversed as soon as a picobot enters it.
+      addTraversedCell(_picobot.getXCoordinate(), _picobot.getYCoordinate());
+    }
+    catch(SimulationException se) {
+      throw new SimulationPicobotException(se.getMessage(), this.getNbTraversedCells());
+    }
   }
 
   /** adds the cell at (x,y) in the set of traversed cells */
   public void addTraversedCell(int x, int y) {
     _state.addCell(((Map) _map).getCell(x, y));
-
   }
   
   /** used in the GUI, not testable from the outside */
@@ -101,16 +105,8 @@ public class Simulator implements ISimulator {
 
   /** Wraps up the content of the game state so as satisfy with the interface. 
     */
-  public Set<int[]> getTraversedCells() {
-    Set<int[]> result = new HashSet<int[]>();
-    for (Cell cell : getGameState().getTraversedCells()) {
-      int[] position = new int[2];
-      position[0] = cell.getXCoordinate();
-      position[1] = cell.getYCoordinate();
-      result.add(position);
-    }
-    
-    return result;
+  public Set<Cell> getTraversedCells() {
+    return _state.getTraversedCells();
   }
 
   /** Store the state of the game (the mission), i.e. the traversed cells */
@@ -145,12 +141,12 @@ public class Simulator implements ISimulator {
         }
       }
     }
-    catch (SimulationException e) {
+    catch (SimulationPicobotException spe) {
       // sometimes, the mission is completed 
       if (isMissionCompleted()) return i;
     }
     //return i;
-    throw new SimulationException("sorry I am done");
+    throw new SimulationPicobotException("sorry I am done", this.getNbTraversedCells());
     
   }
 
@@ -168,7 +164,12 @@ public class Simulator implements ISimulator {
     }
     return true;
   }
- 
+
+  public int getNbTraversedCells() {
+    //return this.getGameState().getTraversedCells().size();
+    return this.getTraversedCells().size();
+  }
+
   public void reset() {
     //reset game state
     _state.reset();
@@ -182,7 +183,4 @@ public class Simulator implements ISimulator {
     // reset the internal state 
     ((Picobot)getPicobot()).resetInternalState();
   }
- 
-
-   
 }

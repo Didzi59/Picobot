@@ -8,6 +8,10 @@ import picobot.interfaces.core.IMap;
 import picobot.interfaces.core.IRule;
 
 public class CommandLineSimulator {
+
+  public static Simulator sim;
+  public static int nbSteps;
+
   public static void main(String[] args) {
     if (args.length != 4) {
             throw new IllegalArgumentException(
@@ -15,7 +19,7 @@ public class CommandLineSimulator {
     }
     
     Factory factory = new Factory();
-    Simulator sim = (Simulator)factory.createSimulator();
+    sim = (Simulator)factory.createSimulator();
     
     MapBuilder mb = (MapBuilder)factory.createMapBuilder();
     mb.parseMap(new File(args[0]));
@@ -36,7 +40,6 @@ public class CommandLineSimulator {
     picobot.setInitialPosition(x,y);
     // positioning the picobot
     //sim.positionThePicobot();
-    
     
     for (int i=0; i< Integer.parseInt(args[3]) ; i++) {
       sim.step();

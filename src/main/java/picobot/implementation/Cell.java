@@ -58,4 +58,26 @@ public class Cell {
   public CellKind getKind() {
     return _cellKind;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if(o instanceof Cell) {
+      Cell c = (Cell)o;
+
+      if(this._cellKind == c.getKind()) {
+        return this._x == c.getXCoordinate() && this._y == c.getYCoordinate();
+      }
+      else {
+        return false;
+      }
+    }
+    else {
+      return false;
+    }
+  }
+
+  @Override
+  public int hashCode() {
+    return this._x + this._y + this._cellKind.hashCode();
+  }
 }
