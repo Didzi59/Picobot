@@ -11,7 +11,7 @@ import opl.iagl.alloy.Result
  */
 object Export {
   private val FOLDER_RESULT_PATH = System.getProperty("user.home") + File.separator + "picobot-alloy-res"
-  private val EXTENSION_FILE = ".res"
+  private val EXTENSION_FILE = ".csv"
 
   private def getFolderResult : Path = {
     var folderResFilePath = Paths.get(FOLDER_RESULT_PATH)
