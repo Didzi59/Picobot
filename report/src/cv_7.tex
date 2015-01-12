@@ -205,39 +205,36 @@ Le modèle comprend trois signatures et deux énumérations :
     \hline
     \textbf{Ensemble} & \textbf{Description} \tabularnewline
     \hline
-    \centering{
+    \let\centering\relax{
     \begin{alloyt}
- sig Rule {
+sig Rule {
   current_state: Int,
   env: Surroundings,
   next: Action
-}
-\end{alloyt}}& \textbf{Rule} définit une règle applicable où \textit{current\_state} désigne l'état initial du robot, \textit{env} son environnement actuel et \textit{next} l'action à effectuer \tabularnewline
+}\end{alloyt}}& \textbf{Rule} définit une règle applicable où \textit{current\_state} désigne l'état initial du robot, \textit{env} son environnement actuel et \textit{next} l'action à effectuer \tabularnewline
     \hline
-    \centering{\begin{alloyt}
+    \raggedleft{\begin{alloyt}
 sig Surroundings {
   north: Wall,
   east: Wall,
   west: Wall,
-  south: Wall
-}
-\end{alloyt}} & \textbf{Surroundings} définit un environnement en indiquant la présence ou non d'un mur dans chacun des quatre points cardinaux.
+  south: Wall 
+}\end{alloyt}} & \textbf{Surroundings} définit un environnement en indiquant la présence ou non d'un mur dans chacun des quatre points cardinaux.
 \tabularnewline
     \hline
-    \centering{\begin{alloyt}
- sig Action {
+    \raggedleft{\begin{alloyt}
+sig Action {
   next_state: Int,
   move: Move
-}
-\end{alloyt}} & \textbf{Action} définit une action à effectuer où \textit{next\_state} désigne le nouvel état du robot et \textit{move} le déplacement à effectuer\tabularnewline
+}\end{alloyt}} & \textbf{Action} définit une action à effectuer où \textit{next\_state} désigne le nouvel état du robot et \textit{move} le déplacement à effectuer\tabularnewline
     \hline
-    \centering{\begin{alloyt}
+    \raggedleft{\begin{alloyt}
 enum Move {N, E, W, S, X}
 \end{alloyt}} & \textbf{Move} définit les cinq mouvements possibles par le robot: un pour chaque direction cardinale (N,E,W,S) et X pour désigner l’absence de mouvement.
 \tabularnewline
     \hline
-    \centering{\begin{alloyt}
- enum Wall {True, False}
+    \raggedleft{\begin{alloyt}
+enum Wall {True, False}
 \end{alloyt}} & \textbf{Wall} est identique à l’ensemble des booléens et définit l’état d’un mur (présent: True, absent: False)\tabularnewline
     \hline
 
@@ -293,6 +290,7 @@ fact consistentStateNumbers {
   all a:Action | some r:Rule | a.next_state = r.current_state 
 }
 \end{alloy}
+\vspace{5mm}
 
 On s’assure également que chaque action dépend d’une règle pour ne pas avoir d’actions inutilisées qui influent sur le fait précédent.
 
@@ -313,6 +311,8 @@ pred neverHoldStill {
   all r:Rule | r.next.move = X => r.next.next_state != r.current_state
 }
 \end{alloy}
+\vspace{0.5cm}
+
 Puisque le robot ne peut pas se retrouver dans une situation où il est encerclé de murs, il n'est pas nécessaire de générer un Surroundings où les quatre directions sont bloquantes.
 \begin{alloy}
 pred neverStucked {
