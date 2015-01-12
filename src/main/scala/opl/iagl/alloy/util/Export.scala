@@ -66,7 +66,7 @@ object Export {
         )
     }.foreach { case (rules: List[Rule], averageCells: Int) =>
       writer.write(rules.map(rule => rule +" ; ").mkString.dropRight(2))
-      writer.write(", "+ averageCells +"\n")
+      writer.write(", "+ nbCells +", "+ averageCells +"\n")
     }
 
     writer.close()
