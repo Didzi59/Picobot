@@ -49,21 +49,21 @@ case class Result(rules : List[Rule], position: Position, nbCellCrossed : Int)
  * @note It requires an integer parameter to specify how much sets of rules it needs to generate with Alloy
  *       To launch it, use this following sbt command :
  *       {{{
- *         sbt "run opl.iagl.alloy.Main [required-parameter]"
+ *         sbt "run [required-parameter]"
  *       }}}
  *
  * @author Romain Philippon
  */
 object Main extends App {
-  /* CHECK PARAMTEER */
-  if (args.length == 1 || !args(1).forall(_.isDigit)) {
+  /* CHECK PARAMETER */
+  if (args.length != 1 || !args(0).forall(_.isDigit)) {
     Console.err.println(Console.RED + "Expected an integer value that represents the number of expected results for each tested alloy model" + Console.RESET)
     System.exit(1)
   }
 
   /* DEFAULT VARIABLES */
   val resourceFolderPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator
-  val numberExpectedResult = args(1).toInt
+  val numberExpectedResult = args(0).toInt
 
   /* LOAD ALLOY MODEL */
   lazy val picobotModelFilesPath: List[String] = List(
