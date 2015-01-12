@@ -47,7 +47,11 @@ case class Result(rules : List[Rule], position: Position, nbCellCrossed : Int)
  * Is the application's main entry point
  *
  * @note It requires an integer parameter to specify how much sets of rules it needs to generate with Alloy
- *       To launch it, use this following sbt command : sbt "run opl.iagl.alloy.Main [required-parameter]"
+ *       To launch it, use this following sbt command :
+ *       {{{
+ *         sbt "run opl.iagl.alloy.Main [required-parameter]"
+ *       }}}
+ *
  * @author Romain Philippon
  */
 object Main extends App {
