@@ -11,7 +11,11 @@
 \usepackage{listings}
 \usepackage{charter}
 \usepackage{array}
+\usepackage{here}
+
 \newcolumntype{M}[1]{>{\raggedright}m{#1}}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
 
 %Listing Alloy
 \lstdefinelanguage{alloy}{
@@ -37,7 +41,6 @@
   breaklines=true,
   breakatwhitespace=true,
   tabsize=3,
-  %basicstyle=\scriptsize\ttfamily,
   basicstyle={\small\ttfamily},
   commentstyle=\itshape,
   columns=flexible,
@@ -98,16 +101,35 @@
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
 
-
-\newsavebox\mybox
 \begin{document}
 
-\title{Génération et analyse automatisées d’ensembles de règles pour Picobot}
+%\title{Génération et analyse automatisées d’ensembles de règles pour Picobot}
+%\author{Quentin BAILLEUL \  Jérémy BOSSUT \  Romain PHILIPPON}
 
-\author{Quentin BAILLEUL \  Jérémy BOSSUT \  Romain PHILIPPON}
 
+%\maketitle
+\begin{titlepage}
+\begin{center}
 
-\maketitle
+% Upper part of the page. The '~' is needed because \\
+% only works if a paragraph has started.
+\includegraphics[width=0.5\textwidth]{pictures/ul.png}~\\[1cm]
+
+% Title
+\HRule \\[0.2cm]
+{ \huge \bfseries Génération et analyse automatisées d’ensembles de règles pour Picobot \\[0.4cm] }
+
+\HRule \\[1.5cm]
+Quentin BAILLEUL \  Jérémy BOSSUT \  Romain PHILIPPON
+
+\vfill
+
+% Bottom of the page
+{\large \today}
+
+\end{center}
+\end{titlepage}
+
 \newpage
 \tableofcontents
 
@@ -121,10 +143,11 @@
 Notre projet utilise le langage de spécification déclaratif Alloy pour générer ces règles. L'objectif est de chercher le plus petit ensemble de règles qui permet au robot de parcourir l’ensemble d’un niveau, quelque soit sa position initiale.
 \\
 
-La section suivante présente l’architecture du projet. Nous présentons le fonctionnement du programme Picobot en détails dans la section~\ref{sec:mod_alloy} et les modèles Alloy utilisés dans la section 4. Les sections 5 et 6 montrent respectivement les résultats obtenus et leur analyse. Enfin nous concluons notre travail dans la section 7.
+La section suivante présente l’architecture du projet. Nous présentons le fonctionnement du programme Picobot en détails dans la section~\ref{sec:picobot} et les modèles Alloy utilisés dans la section ~\ref{sec:mod_alloy}. Les sections ~\ref{sec:result} et ~\ref{sec:ana_result} montrent respectivement les résultats obtenus et leur analyse. Enfin nous concluons notre travail dans la section ~\ref{sec:conclusion}.
 
 
 \section{Picobot}
+\label{sec:picobot}
 Le robot Picobot se trouve dans un environnement rectangulaire modélisé par un tableau de cellules. Les cellules peuvent être inoccupées ou contenir un mur empêchant le passage du robot. Le robot est uniquement capable de percevoir l’occupation des cellules alentours. Comme il n’est pas doté de mémoire interne alors il ne peut pas savoir sur quelle cellule il se trouve et s’il l’a déjà parcouru. Il n’est donc pas possible d’utiliser un algorithme de recherche de chemins tel que \href{http://fr.wikipedia.org/wiki/Recherche_de_chemin}{Dijkstra ou A*}.
 
 Pour se déplacer, le robot respecte un ensemble de règles pré-établies. Une règle est formée de la façon suivante:
@@ -134,26 +157,42 @@ Pour se déplacer, le robot respecte un ensemble de règles pré-établies. Une 
 
 \textit{Surroundings} est une chaîne de quatre caractères représentant l’occupation des cellules voisines. Les environnement possibles sont les suivants : 
 
-[IMAGE0]
+
+\begin{figure}[H]
+\centering{
+\includegraphics[scale=0.3]{pictures/Image0.png}}
+\end{figure}
 
 Il est possible de remplacer un des caractères par ‘*’. Le caractère ‘*’ signifie qu’on ne se soucie pas de la présence ou non d’un obstacle à l’emplacement désigné.
 
 \textit{MovementDirection} représente la direction dans laquelle on souhaite que le robot se déplace. Le robot peut se déplacer dans les quatre directions cardinales (N pour Nord, E pour Est, W pour Ouest, S pour Sud) ou choisir de ne pas bouger (X).
+\newline
 
-\textbf{Exemple} : Considérons l’ensemble de règles pour Picobot suivant.
-0 x*** -> N 0
-0 N*** -> W 1
-1 ***x -> S 1
+\textbf{Exemple} : Considérons l’ensemble de règles pour Picobot suivant.\\
+\begin{center}
+0 x*** -> N 0\\
+0 N*** -> W 1\\
+1 ***x -> S 1\\
 1 ***S -> X 0
+\end{center}
 
-[IMAGE 1]
+% \begin{figure}[H]
+% \centering{
+% \includegraphics[scale=1]{pictures/Image1.png}
+% }
+% \end{figure}
 
-La règle 0 x*** -> N 0 est suivie lorsque le robot est dans l'état 0 et qu'il détecte une cellule libre au Nord. Lorsque cette situation se produit, le robot se déplace d'une unité vers le Nord et reste à l'état 0. Lorsque le robot rencontre un obstacle au Nord, la règle 0 N*** -> W 1 change son état à 1 et le fait se déplacer vers l’Ouest. Une fois le robot dans l'état 1, il suit la règle règle 1 ***x -> S 1 et va se déplacer vers le Sud jusqu'à ce qu'il rencontre un mur dans cette direction. Dans ce cas, il revient à l'état 0 selon la règle 1 ***S -> X 0.
+La règle \textit{0 x*** -> N 0} est suivie lorsque le robot est dans l'état 0 et qu'il détecte une cellule libre au Nord. Lorsque cette situation se produit, le robot se déplace d'une unité vers le Nord et reste à l'état 0. Lorsque le robot rencontre un obstacle au Nord, la règle \textit{0 N*** -> W 1} change son état à 1 et le fait se déplacer vers l’Ouest. Une fois le robot dans l'état 1, il suit la règle règle \textit{1 ***x -> S 1} et va se déplacer vers le Sud jusqu'à ce qu'il rencontre un mur dans cette direction. Dans ce cas, il revient à l'état 0 selon la règle \textit{1 ***S -> X 0}.
 
 \section{Modèles Alloy}
 \label{sec:mod_alloy}
 Le caractère ‘*’ a été introduit dans le but d’obtenir une représentation plus succincte des règles. Pour tout ensemble de règles qui utilise ce caractère, il est alors possible de trouver un ensemble de règles équivalent qui ne l’utilise pas.
 %[Image Règles]
+
+\begin{figure}[H]
+\centering{\includegraphics[scale=0.7]{pictures/Image2.png}}
+\end{figure}
+
 
 Dans cette section, nous présentons deux modèles Alloy - le premier sans ‘*’ et le second avec - qui permettent de générer des ensembles de règles pour Picobot.
 
@@ -245,6 +284,7 @@ fact noDuplicatedSurroundings {
 }
 \end{alloy}
 
+\newpage
 \subsubsection*{Enchaînement des règles}
 Pour empêcher les règles isolées, il est nécessaire que chaque action emmène vers un état pour lequel il existe une règle.
 
@@ -279,6 +319,8 @@ pred neverStucked {
   no s:Surroundings | s.north = True && s.east = True && s.west = True && s.south = True
 }
 \end{alloy}
+
+\newpage
 
 Il n'est pas pertinent de demander au robot de se déplacer dans une direction lorsque l'on sait au préalable qu'elle contient un mur. 
 
@@ -340,7 +382,10 @@ fact compatibleRules {
     \end{tabular}
 
 \section{Résultats}
+\label{sec:result}
 \section{Analyse des résultats}
+\label{sec:ana_result}
 \section{Conclusion}
+\label{sec:conclusion}
 
 \end{document}
