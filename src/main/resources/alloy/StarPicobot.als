@@ -34,7 +34,11 @@ sig Action {
 /**
   * Define a move following a compass direction (North, East, West, South) or no move (X)
   */
+<<<<<<< HEAD
 enum Move {N, E, W, S, X}
+=======
+enum Move {N, E, W, S, X }
+>>>>>>> origin/master
 
 /**
   * Define whether there is a wall or not
