@@ -7,7 +7,7 @@ PICOBOT-ALLOY
 
 [Lien du dépôt chez GitHub](https://github.com/Didzi59/Picobot)
 
-[Lien du commit correspondant à la dernière version](https://github.com/Didzi59/Picobot/commit/25dfd38e6723806cd61124fe84cd3dc39ca63515)
+[Lien du commit correspondant à la dernière version](https://github.com/Didzi59/Picobot/commit/0bdf5f7401dfa7aedc1e8f2eadff18768a1ca932)
 
 PRÉSENTATION
 ------------
