@@ -79,7 +79,7 @@ object EnvInfo extends Enumeration {
 /**
  * Describes a Picobot environment while crossing
  *
- * @see [opl.iagl.alloy.EnvInfo]
+ * @see [opl.iagl.EnvInfo]
  *
  * @param north is the value information for the direction
  * @param east is the value information for the direction
@@ -95,7 +95,7 @@ case class Surroundings(north: ENVINFO, east: ENVINFO, west: ENVINFO, south: ENV
 /**
  * Describes a Picobot action
  *
- * @see [opl.iagl.alloy.Move]
+ * @see [opl.iagl.Move]
  *
  * @param nextState tells what is the next Picobot's intern state
  * @param move tells what move the Picobot has to perform
