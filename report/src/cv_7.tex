@@ -10,23 +10,90 @@
 
 \usepackage{listings}
 \usepackage{charter}
+\usepackage{array}
+\newcolumntype{M}[1]{>{\raggedright}m{#1}}
 
-% Listing Scala
-\lstdefinelanguage{scala}{
-  morekeywords={abstract,case,catch,class,def,%
-    do,else,extends,false,final,finally,%
-    for,if,implicit,import,match,mixin,%
-    new,null,object,override,package,%
-    private,protected,requires,return,sealed,%
-    super,this,throw,trait,true,try,%
-    type,val,var,while,with,yield},
-  otherkeywords={=>,<-,<\%,<:,>:,\#,@},
-  sensitive=true,
-  morecomment=[l]{//},
-  morecomment=[n]{/*}{*/},
-  morestring=[b]'',
-  morestring=[b]',
-  morestring=[b]"''
+%Listing Alloy
+\lstdefinelanguage{alloy}{
+  keywords={%
+      assert, pred, all, no, lone, one, some, check, run,
+      but, let, implies, not, iff, in, and, or, set, sig, Int, int,
+      if, then, else, exactly, disj, fact, fun, module, abstract,
+      extends, open, none, univ, iden, seq,
+  },
+  literate=%
+    {:}{$\colon$}1
+    {|}{$\bullet$}1
+    {==}{$=$}1
+    {=}{$=$}1
+    {!=}{$\neq$}1
+    {&&}{$\land$}1
+    {||}{$\lor$}1
+    {<=}{$\le$}1
+    {>=}{$\ge$}1
+    {all}{$\forall$}1
+    {exists}{$\exists$}1
+    {!in}{$\not\in$}1
+    {\\in}{$\in$}1
+    {=>}{$\implies$}2
+    % the following isn't actually Alloy, but it gives the option to produce nicer latex
+    {|=>}{$\Rightarrow$}2
+    {<=set}{$\subseteq$}1
+    {+set}{$\cup$}1
+    {*set}{$\cap$}1
+    {==>}{$\Longrightarrow$}3
+    {<==>}{$\Longleftrightarrow$}4
+    {...}{$\ldots$}1
+    {\\hl}{$\hline$}1
+    {\\alpha}{$\alpha$}1
+    {\\beta}{$\beta$}1
+    {\\gamma}{$\gamma$}1
+    {\\delta}{$\delta$}1
+    {\\epsilon}{$\epsilon$}1
+    {\\zeta}{$\zeta$}1
+    {\\eta}{$\eta$}1
+    {\\theta}{$\theta$}1
+    {\\iota}{$\iota$}1
+    {\\kappa}{$\kappa$}1
+    {\\lambda}{$\lambda$}1
+    {\\mu}{$\mu$}1
+    {\\nu}{$\nu$}1
+    {\\xi}{$\xi$}1
+    {\\pi}{$\pi$}1
+    {\\rho}{$\rho$}1
+    {\\sigma}{$\sigma$}1
+    {\\tau}{$\tau$}1
+    {\\upsilon}{$\upsilon$}1
+    {\\phi}{$\phi$}1
+    {\\chi}{$\chi$}1
+    {\\psi}{$\psi$}1
+    {\\omega}{$\omega$}1
+    {\\Gamma}{$\Gamma$}1
+    {\\Delta}{$\Delta$}1
+    {\\Theta}{$\Theta$}1
+    {\\Lambda}{$\Lambda$}1
+    {\\Xi}{$\Xi$}1
+    {\\Pi}{$\Pi$}1
+    {\\Sigma}{$\Sigma$}1
+    {\\Upsilon}{$\Upsilon$}1
+    {\\Phi}{$\Phi$}1
+    {\\Psi}{$\Psi$}1
+    {\\Omega}{$\Omega$}1
+    {\\EOF}{\;}1
+    ,
+  sensitive=true,  % case sensitive
+  morecomment=[l]//,%
+  morecomment=[l]{--},%
+  morecomment=[s]{/*}{*/},%
+  morestring=[b]",
+  numbers=none,
+  firstnumber=1,
+  numberstyle=\tiny,
+  stepnumber=2,
+  basicstyle=\scriptsize\ttfamily,
+  commentstyle=\itshape,
+  keywordstyle=\bfseries,
+  ndkeywordstyle=\bfseries,
 }
 
 \usepackage{color}
@@ -35,25 +102,25 @@
 \definecolor{mauve}{rgb}{0.58,0,0.82}
 
 % Default settings for code listings
-\lstset{frame=tb,
-  language=scala,
-  aboveskip=3mm,
-  belowskip=3mm,
-  showstringspaces=false,
-  columns=flexible,
-  basicstyle={\small\ttfamily},
-  numbers=none,
-  numberstyle=\tiny\color{gray},
-  keywordstyle=\color{blue},
-  commentstyle=\color{dkgreen},
-  stringstyle=\color{mauve},
-  frame=single,
-  breaklines=true,
-  breakatwhitespace=true
-  tabsize=3
-}
+% \lstset{
+%   language=alloy,
+%   %aboveskip=3mm,
+%   %belowskip=3mm,
+%   showstringspaces=false,
+%   columns=flexible,
+%   basicstyle={\small\ttfamily},
+%   %numbers=none,
+%   numberstyle=\tiny\color{gray},
+%   keywordstyle=\color{blue},
+%   commentstyle=\color{dkgreen},
+%   stringstyle=\color{mauve},
+%   %frame=single
+%   breaklines=true,
+%   breakatwhitespace=true,
+%   tabsize=3
+% }
 
-% 
+\newsavebox\mybox
 \begin{document}
 
 \title{Picobot}
@@ -111,62 +178,208 @@ calculée et son résultat est sauvegardée en
 mémoire. Quand toutes les méthodes sont évaluées, l'algorithme renvoie
 la liste des dix méthodes les plus suspectes.
 
-
-
+\newpage
 \subsection{Exemple}
 
-\section{Résultats}
+0 x*** -> N 0
+Cette règle est suivie lorsque Picobot est dans l'État de 0 et qu'il détecte une tache blanche au Nord et n'importe quoi à l'Est, l'ouest et au Sud (mur ou pas mur).
+Lorsque cette situation se produit, alors Picobot se déplace d'une unité vers le Nord et reste à l'état 0.
+jusqu'à ce Picobot touche finalement le mur Nord.
+0 N *** -> S 1
+Avec cette règle picobot passera à l'état 1 et ira vers le sud
+Puis utilisera donc cette règle
+1 ***x -> S 1
+Maintenant que Picobot est dans l'État de 1, il va se déplacer vers Sud jusqu'à ce qu'il rencontre un mur dans cette direction :
+1 ***S -> X 0
+Et qu'il revienne à l'état 0 et reparte vers le nord.
+
+\section{Modèles Alloy}
+Le caractère ‘*’ a été introduit dans le but d’obtenir une représentation plus succincte des règles. Pour tout ensemble de règles qui utilise ce caractère, il est alors possible de trouver un ensemble de règles équivalent qui ne l’utilise pas.
+%[Image Règles]
+
+Dans cette section, nous présentons deux modèles Alloy - le premier sans ‘*’ et le second avec - qui permettent de générer des ensembles de règles pour Picobot.
+
+\subsection{Modèle original}
+\subsubsection{Ensembles}
+Le modèle comprend trois signatures et deux énumérations :
+\\
+
+\begin{tabular}{|l|M{8cm}|}
+    \hline
+    \textbf{Ensemble} & \textbf{Description} \tabularnewline
+    \hline
+    \begin{lstlisting}
+ sig Rule {
+  current_state: Int,
+  env: Surroundings,
+  next: Action
+}
+\end{lstlisting} & \textbf{Rule} définit une règle applicable où \textit{current\_state} désigne l'état initial du robot, \textit{env} son environnement actuel et \textit{next} l'action à effectuer \tabularnewline
+    \hline
+    \begin{lstlisting}
+sig Surroundings {
+  north: Wall,
+  east: Wall,
+  west: Wall,
+  south: Wall
+}
+\end{lstlisting} & \textbf{Surroundings} définit un environnement en indiquant la présence ou non d'un mur dans chacun des quatre points cardinaux.
+\tabularnewline
+    \hline
+    \begin{lstlisting}
+ sig Action {
+  next_state: Int,
+  move: Move
+}
+\end{lstlisting} & \textbf{Action} définit une action à effectuer où \textit{next\_state} désigne le nouvel état du robot et \textit{move} le déplacement à effectuer\tabularnewline
+    \hline
+    \begin{lstlisting}
+enum Move {N, E, W, S, X}
+\end{lstlisting} & \textbf{Move} définit les cinq mouvements possibles par le robot: un pour chaque direction cardinale (N,E,W,S) et X pour désigner l’absence de mouvement.
+\tabularnewline
+    \hline
+    \begin{lstlisting}
+ enum Wall {True, False}
+\end{lstlisting} & \textbf{Wall} est identique à l’ensemble des booléens et définit l’état d’un mur (présent: True, absent: False)\tabularnewline
+    \hline
+
+ \end{tabular}
+
+\subsubsection{Faits}
+Afin de garantir la compatibilité des règles générées avec le programme Picobot, six faits sont utilisés : 
 
 
+\subsubsection*{Numéro d’état valide}
+ Le programme Picobot ne gère que 100 numéros d’état numérotés de 0 à 99 :
 
-\section{Conclusion}
-\newpage
-\section{Exemple Java}
 \begin{lstlisting}
-  package examples
-
-  /** This examples illustrates the use of Guarded
-  *  Algebraic Data Types in Scala. For more information
-  *  please refer to the Scala specification available
-  *  from http://scala-lang.org/docu/.
-  */
-  object gadts extends Application {
-
-    /* The syntax tree of a toy language */
-    abstract class Term[T]
-
-    /* An integer literal */
-    case class Lit(x: Int) extends Term[Int]
-
-    /* Successor of a number */
-    case class Succ(t: Term[Int]) extends Term[Int]
-
-    /* Is 't' equal to zero? */
-    case class IsZero(t: Term[Int]) extends Term[Boolean]
-
-    /* An 'if' expression. */
-    case class If[T](c: Term[Boolean],
-    t1: Term[T],
-    t2: Term[T]) extends Term[T]
-
-    /** A type-safe eval function. The right-hand sides can
-    *  make use of the fact that 'T' is a more precise type,
-    *  constraint by the pattern type.
-    */
-    def eval[T](t: Term[T]): T = t match {
-      case Lit(n)        => n
-
-      // the right hand side makes use of the fact
-      // that T = Int and so it can use '+'
-      case Succ(u)       => eval(u) + 1
-      case IsZero(u)     => eval(u) == 0
-      case If(c, u1, u2) => eval(if (eval(c)) u1 else u2)
-    }
-    println(
-    eval(If(IsZero(Lit(1)), Lit(41), Succ(Lit(41)))))
-  }
+fact validState {
+  all r:Rule | r.current_state >= 0 && r.current_state < 100
+  all a:Action | a.next_state >= 0 && a.next_state < 100
+}
 \end{lstlisting}
 
+\subsubsection*{État initial}
+Le robot débutant à l’état 0, il est nécessaire qu'il existe au moins une règle commençant par cet état. De plus, cette règle doit exécuter une action avec un mouvement effectif dans l'une des quatre directions :
 
+\begin{lstlisting}
+fact initialState {
+  some r:Rule | r.current_state = 0 && r.next.move != X
+}
+\end{lstlisting}
+
+\subsubsection*{Déterminisme du comportement}
+
+Le comportement du robot doit être déterministe. Il ne peut donc pas y avoir d'ambiguïté sur le choix de la règle à appliquer dans une situation donnée. Autrement dit, deux règles ayant le même numéro d'état et le même environnement ne peuvent pas coexister. 
+
+\begin{lstlisting}
+fact noDuplicatedRule {
+  all r1: Rule | all r2:Rule-r1 | r1.current_state = r2.current_state => r1.env != r2.env 
+}
+\end{lstlisting}
+
+En conséquence, il ne peut pas exister non plus deux instances Surroundings en Alloy qui représente le même environnement.
+
+\begin{lstlisting}
+fact noDuplicatedSurroundings {
+  all s1:Surroundings | no s2:Surroundings-s1 | s1.north = s2.north && s1.east = s2.east && s1.west = s2.west && s1.south = s2.south  
+}
+\end{lstlisting}
+
+\subsubsection*{Enchaînement des règles}
+Pour empêcher les règles isolées, il est nécessaire que chaque action emmène vers un état pour lequel il existe une règle.
+
+\begin{lstlisting}
+fact consistentStateNumbers {
+  all a:Action | some r:Rule | a.next_state = r.current_state 
+}
+\end{lstlisting}
+
+On s’assure également que chaque action dépend d’une règle pour ne pas avoir d’actions inutilisées qui influent sur le fait précédent.
+
+\begin{lstlisting}
+fact allActionsHaveRule {
+  all a:Action | some r:Rule | r.next = a
+}
+\end{lstlisting}
+
+\subsubsection{Prédicats d’optimisation}
+Quatre prédicats sont ajoutés pour générer un meilleur ensemble de règles. Les modifications induites par ces prédicats ne sont pas nécessaires au bon fonctionnement de Picobot mais permettent d'éviter de générer des règles qui ne peuvent pas être appelées ou qui n'apportent aucune plus-value à l'ensemble.
+
+\subsubsection*{Immobilisme}
+Une règle qui conserve l’état et n'exécute pas de mouvement bloquerait le robot dans une boucle infinie. Le prédicat suivant permet d'empêcher la génération de ce type de règles.
+
+\begin{lstlisting}
+pred neverHoldStill {
+  all r:Rule | r.next.move = X => r.next.next_state != r.current_state
+}
+\end{lstlisting}
+Puisque le robot ne peut pas se retrouver dans une situation où il est encerclé de murs, il n'est pas nécessaire de générer un Surroundings où les quatre directions sont bloquantes.
+\begin{lstlisting}
+pred neverStucked {
+  no s:Surroundings | s.north = True && s.east = True && s.west = True && s.south = True
+}
+\end{lstlisting}
+
+Il n'est pas pertinent de demander au robot de se déplacer dans une direction lorsque l'on sait au préalable qu'elle contient un mur. 
+
+\begin{lstlisting}
+pred noMoveIntoAWall {
+  all r:Rule | r.env.north = True => r.next.move != N
+  all r:Rule | r.env.east = True => r.next.move != E
+  all r:Rule | r.env.west = True => r.next.move != W
+  all r:Rule | r.env.south = True => r.next.move != S
+}
+\end{lstlisting}
+
+\subsubsection*{Règles inatteignables}
+Pour qu’une règle soit atteignable, il faut que son état initial soit accessible depuis une autre règle. Il faut donc, pour chaque règle dont l’état initial \textit{state} est différent de 0, qu’il existe une règle dont l’état initial est différent de \textit{state} qui exécute une action amenant à l’état \textit{state}. Il est important de noter que cette condition est nécessaire mais pas suffisante. Par exemple, dans un ensemble de trois règles dont les transformations d’état sont R1: 0 -> 0, R2: 1->2 et R3: 2->1, le prédicat est respecté mais les règles R2 et R3 sont inatteignables.
+
+\begin{lstlisting}
+pred preventInaccessibleRule {
+  all r1:Rule | some r2:Rule | r1.current_state!=0 => r1.current_state != r2.current_state && r2.next.next_state = r1.current_state
+}
+\end{lstlisting}
+
+\subsubsection{Autres prédicats}
+Le modèle comprend également quelques prédicats dont les apports sont essentiellement cosmétiques. Ceux-ci permettent l'utilisation de numéros d’états consécutifs, d'empêcher la génération de deux actions identiques ou d’environnements non utilisés. Ces prédicats n'ayant pas d'influence sur l'ensemble de règles généré, ils sont inactifs par défaut afin d'améliorer les performances d'Alloy.
+
+\subsection{Modèle alternatif}
+Le modèle alternatif autorise l'autorisation du caractère ‘*’ pour décrire un environnement. Pour réaliser cette modification, un troisième état est ajouté dans l’énumération \textit{\textbf{Wall}} :
+
+\begin{lstlisting}
+enum Wall {True, False, Star}
+\end{lstlisting}
+
+La mise en place du caractère ‘*’ impose également la création d'un nouveau fait pour garder l'aspect déterministe des ensembles de règles :
+
+\begin{lstlisting}
+fact compatibleRules {
+  all r1: Rule | no r2:Rule-r1 | (r1.current_state = r2.current_state) &&     (r1.env.north = r2.env.north || r1.env.north = Star || r2.env.north = Star) &&
+  (r1.env.east = r2.env.east || r1.env.east = Star || r2.env.east = Star) &&
+  (r1.env.west = r2.env.west|| r1.env.west = Star || r2.env.west = Star) &&
+  (r1.env.south = r2.env.south || r1.env.south = Star || r2.env.south = Star) 
+}
+\end{lstlisting}
+
+\subsection{Comparaison des modèles}
+\begin{tabular}{|M{8cm}|M{8cm}|}
+    \hline
+    \textbf{Modèle original} & \textbf{Modèle alternatif} \tabularnewline
+    \hline
+    Augmente grandement le nombre de règles nécessaires à la réalisation d'un niveau de Picobot & Permet l'utilisation d'une écriture réduite des règles. \tabularnewline
+    \hline
+    Limite le nombre d'objets Surroundings possibles à $2^4-1=15$ & Augmente le nombre d'objets Surroundings possibles à $3^4-1=80$
+ \tabularnewline
+    \hline
+    Pour 25 instances d'objets, Alloy réduit le problème à :
+159374 variables, dont 4350 primaires et 429710 clauses & Pour 25 instances d’objets, Alloy réduit le problème à :
+181326 variables, dont 4450 primaires et 480863 clauses. \tabularnewline
+    \hline
+    \end{tabular}
+
+\section{Résultats}
+\section{Analyse des résultats}
+\section{Conclusion}
 
 \end{document}
