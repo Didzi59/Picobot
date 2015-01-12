@@ -7,7 +7,7 @@ PICOBOT-ALLOY
 
 [Lien du dépôt chez GitHub](https://github.com/Didzi59/Picobot)
 
-[Lien du commit correspondant à la dernière version](https://github.com/Didzi59/Picobot/commit/247e07a42cf6ee5f24f2c95ba4de4f6dc15a04ea)
+[Lien du commit correspondant à la dernière version](https://github.com/Didzi59/Picobot/commit/25dfd38e6723806cd61124fe84cd3dc39ca63515)
 
 PRÉSENTATION
 ------------
@@ -89,3 +89,8 @@ Dans le cas du nombre passant ou échouant pour chaque ensemble de règles :
 Listes des règles | Nombre total de cases | Nombre de cas passants | Nombre de cas échouants
 ----------------- | --------------------- | ---------------------- | -----------------------
 règles au format Picobot | nombre de cases à parcourir de la map | nombre moyen au format entier compris entre [0 ; Nombre total de cases] | nombre moyen au format entier compris entre [0 ; Nombre total de cases]
+
+DOCUMENTATION
+-------------
+
+Pour générer la documentation utilisez la commande suivante : `sbt doc`. Vous trouverez ensuite celle-ci dans `target/scala-2.11/api`
