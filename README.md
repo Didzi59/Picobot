@@ -21,7 +21,7 @@ ARCHITECTURE
 
 L'ensemble des sources de Picobot Alloy se trouve dans le package `opl.iagl.alloy`.
 
-Du côté SCALA, vous retrouverez 2 objets à la racine du package :
+Du côté SCALA, vous retrouverez deux objets à la racine du package :
 * __Main__ qui sert de point d'entrée et lance la génération des ensembles de règles et des simulations.
 * __alloy__ contenu dans `package.scala` qui contient (en plus des fonctions permettant de lancer les simulations) les déclarations des classes symbolisant d'un point de vue données une règle pour le Picobot.
 
@@ -41,7 +41,7 @@ FONCTIONNEMENT
 
 Pour fonctionner, le programme nécessite au minimum deux éléments :
 1. Un modèle Alloy décrivant un ensemble de règles pour le Picobot
-2. Une map (_fermée_) pour le Picobot où le caractère # défini un mur
+2. Une map (_fermée_) pour le Picobot où le caractère # définit un mur
 
 Chacun de ces éléments doit être situé dans le dossier resources situé dans `src/main/resources`. Le modèle Alloy doit être disposé dans le sous-dossier `alloy`. Il doit être un fichier un fichier Alloy avec l'extension _.als_. Quant aux maps, celles-ci doivent être déposées dans le sous-dossier `maps`. Ce fichier doit être un fichier texte, de préférence comportant l'extension _.map_ pour signifier que c'est un fichier contenant une map.
 
@@ -84,7 +84,7 @@ Listes des règles | Nombre total de cases | Nombre moyen de cases parcourues
 ----------------- | --------------------- | --------------------------------
 règles au format Picobot | nombre de cases à parcourir de la map | nombre moyen au format entier compris entre 0 et le nombre total de cases
 
-Dans le cas du nombre de parcours passant ou échouant pour chaque ensemble de règles :
+Dans le cas du nombre de parcours passants ou échouants pour chaque ensemble de règles :
 
 Listes des règles | Nombre total de cases | Nombre de cas passants | Nombre de cas échouants
 ----------------- | --------------------- | ---------------------- | -----------------------
