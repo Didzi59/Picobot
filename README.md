@@ -14,7 +14,7 @@ PRÉSENTATION
 
 Picobot Alloy est un programme qui génère un ensemble de règles pour le Picobot en utilisant le solveur SAT [Alloy](http://alloy.mit.edu/alloy/) et qui testent  celles-ci en utilisant une version modifiée d'un simulateur Picobot JAVA.
 
-Le  programme est en SCALA et utilise l'outil de build SBT. Pour le lancer, il faut utiliser la commande `sbt "run opl.iagl.alloy.Main [nombre-solutions]"` où `nombre-solutions` est un paramètre entier déterminant le nombre d'ensembles de règles que le programme doit générer avec Alloy.
+Le  programme est en SCALA et utilise l'outil de build SBT. Pour le lancer, il faut utiliser la commande `sbt "run [nombre-solutions]"` où `nombre-solutions` est un paramètre entier déterminant le nombre d'ensembles de règles que le programme doit générer avec Alloy.
 
 ARCHITECTURE
 ------------
