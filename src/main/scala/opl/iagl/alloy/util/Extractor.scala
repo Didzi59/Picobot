@@ -5,16 +5,29 @@ import opl.iagl.{Surroundings, Action, Rule}
 
 import scala.io.Source
 
+/**
+ * Describes a position in 2D plane
+ * @param x is the x-coordinate position
+ * @param y is the y-coordinate position
+ */
 case class Position(x : Int, y : Int)
 
 /**
- * Extracts free positions from a Picobot map
+ * Provides several function to extract information from simple formatted text file
  *
  * @author Romain Philippon
  */
 object Extractor {
-  val WALL_CELL = '#'
+  /**
+   * Is the character that represents a wall in a Picobot map
+   */
+  private val WALL_CELL = '#'
 
+  /**
+   * Gets positions of non-wall cells from a Picobot map
+   * @param mapFilePath is the absolute path of a Picobot map
+   * @return a list of all non-wall cell positions
+   */
   def positions(mapFilePath : String) : List[Position] = {
     var y = 0
     var list : List[Position] = Nil
@@ -30,6 +43,11 @@ object Extractor {
     list
   }
 
+  /**
+   * Gets Picobot rules from a file
+   * @param rulesFilePath is the absolute path of a file containing Picobot rules
+   * @return the list of rules containing in the file
+   */
   def rules(rulesFilePath : String) : List[Rule] = {
     def buildRule(array : Array[String]) : Rule = {
       Rule (
