@@ -136,8 +136,7 @@ Quentin BAILLEUL \  Jérémy BOSSUT \  Romain PHILIPPON
 \newpage
 
 
-\section{Introduction}
-\href{https://learn.cs.uml.edu/ext/picobot/}{Picobot} est un projet utilisé comme support au cours introductoire d'informatique du Dr. Zachary Dodds au Harvey Mudd College de Californie. Ce programme modélise le comportement d’un robot-aspirateur dont le but est d’examiner tous les emplacements inoccupés de son environnement. Il est possible de programmer le robot en lui fournissant un ensemble de règles à respecter.
+Picobot\footnote{\label{pico_lien}\url{https://learn.cs.uml.edu/ext/picobot/}} est un projet utilisé comme support au cours introductoire d'informatique du Dr. Zachary Dodds au Harvey Mudd College de Californie. Ce programme modélise le comportement d’un robot-aspirateur dont le but est d’examiner tous les emplacements inoccupés de son environnement. Il est possible de programmer le robot en lui fournissant un ensemble de règles à respecter.
 \\
 
 Notre projet utilise le langage de spécification déclaratif Alloy pour générer ces règles. L'objectif est de chercher le plus petit ensemble de règles qui permet au robot de parcourir l’ensemble d’un niveau, quelque soit sa position initiale.
@@ -148,13 +147,16 @@ La section suivante présente l’architecture du projet. Nous présentons le fo
 
 \section{Picobot}
 \label{sec:picobot}
-Le robot Picobot se trouve dans un environnement rectangulaire modélisé par un tableau de cellules. Les cellules peuvent être inoccupées ou contenir un mur empêchant le passage du robot. Le robot est uniquement capable de percevoir l’occupation des cellules alentours. Comme il n’est pas doté de mémoire interne alors il ne peut pas savoir sur quelle cellule il se trouve et s’il l’a déjà parcouru. Il n’est donc pas possible d’utiliser un algorithme de recherche de chemins tel que \href{http://fr.wikipedia.org/wiki/Recherche_de_chemin}{Dijkstra ou A*}.
+Le robot Picobot se trouve dans un environnement rectangulaire modélisé par un tableau de cellules. Les cellules peuvent être inoccupées ou contenir un mur empêchant le passage du robot. Le robot est uniquement capable de percevoir l’occupation des cellules alentours. Comme il n’est pas doté de mémoire interne alors il ne peut pas savoir sur quelle cellule il se trouve et s’il l’a déjà parcourue. Il n’est donc pas possible d’utiliser un algorithme de recherche de chemins tel que Dijkstra ou A*\footnote{\label{pathginding_lien}\url{http://fr.wikipedia.org/wiki/Recherche\_de\_chemin/}}.
+\\
 
 Pour se déplacer, le robot respecte un ensemble de règles pré-établies. Une règle est formée de la façon suivante:
+\begin{center}
 \textit{CurrentState Surroundings} -> \textit{MovementDirection NewState}
+\end{center}
 
 \textit{CurrentState} et \textit{NewState} sont deux nombres entiers compris entre 0 et 99. Ces nombres représentent le numéro de l’état dans lequel se trouve le robot respectivement avant et après l’exécution de la règle. Au lancement du programme, le robot se trouve dans l’état 0.
-
+\newpage
 \textit{Surroundings} est une chaîne de quatre caractères représentant l’occupation des cellules voisines. Les environnement possibles sont les suivants : 
 
 
@@ -164,25 +166,25 @@ Pour se déplacer, le robot respecte un ensemble de règles pré-établies. Une 
 \end{figure}
 
 Il est possible de remplacer un des caractères par ‘*’. Le caractère ‘*’ signifie qu’on ne se soucie pas de la présence ou non d’un obstacle à l’emplacement désigné.
+\vspace{5mm}
 
 \textit{MovementDirection} représente la direction dans laquelle on souhaite que le robot se déplace. Le robot peut se déplacer dans les quatre directions cardinales (N pour Nord, E pour Est, W pour Ouest, S pour Sud) ou choisir de ne pas bouger (X).
 \newline
 
-\textbf{Exemple} : Considérons l’ensemble de règles pour Picobot suivant.\\
+\textbf{Exemple} : Considérons l’ensemble de règles pour Picobot suivant.
 \begin{center}
-0 x*** -> N 0\\
+\texttt{0 x*** -> N 0\\
 0 N*** -> W 1\\
 1 ***x -> S 1\\
-1 ***S -> X 0
+1 ***S -> X 0}
 \end{center}
 
-% \begin{figure}[H]
-% \centering{
-% \includegraphics[scale=1]{pictures/Image1.png}
-% }
-% \end{figure}
+\begin{figure}[H]
+ \centerline{\includegraphics[scale=0.45]{pictures/Image1.png}}
+ 
+ \end{figure}
 
-La règle \textit{0 x*** -> N 0} est suivie lorsque le robot est dans l'état 0 et qu'il détecte une cellule libre au Nord. Lorsque cette situation se produit, le robot se déplace d'une unité vers le Nord et reste à l'état 0. Lorsque le robot rencontre un obstacle au Nord, la règle \textit{0 N*** -> W 1} change son état à 1 et le fait se déplacer vers l’Ouest. Une fois le robot dans l'état 1, il suit la règle règle \textit{1 ***x -> S 1} et va se déplacer vers le Sud jusqu'à ce qu'il rencontre un mur dans cette direction. Dans ce cas, il revient à l'état 0 selon la règle \textit{1 ***S -> X 0}.
+La règle \texttt{0 x*** -> N 0} est suivie lorsque le robot est dans l'état 0 et qu'il détecte une cellule libre au Nord. Lorsque cette situation se produit, le robot se déplace d'une unité vers le Nord et reste à l'état 0. Lorsque le robot rencontre un obstacle au Nord, la règle \texttt{0 N*** -> W 1} change son état à 1 et le fait se déplacer vers l’Ouest. Une fois le robot dans l'état 1, il suit la règle règle \texttt{1 ***x -> S 1} et va se déplacer vers le Sud jusqu'à ce qu'il rencontre un mur dans cette direction. Dans ce cas, il revient à l'état 0 selon la règle \texttt{1 ***S -> X 0}.
 
 \section{Modèles Alloy}
 \label{sec:mod_alloy}
@@ -207,7 +209,7 @@ Le modèle comprend trois signatures et deux énumérations :
     \hline
     \centering{
     \begin{alloyt}
- sig Rule {
+sig Rule {
   current_state: Int,
   env: Surroundings,
   next: Action
@@ -225,7 +227,7 @@ sig Surroundings {
 \tabularnewline
     \hline
     \centering{\begin{alloyt}
- sig Action {
+sig Action {
   next_state: Int,
   move: Move
 }
@@ -237,7 +239,7 @@ enum Move {N, E, W, S, X}
 \tabularnewline
     \hline
     \centering{\begin{alloyt}
- enum Wall {True, False}
+enum Wall {True, False}
 \end{alloyt}} & \textbf{Wall} est identique à l’ensemble des booléens et définit l’état d’un mur (présent: True, absent: False)\tabularnewline
     \hline
 
@@ -248,7 +250,7 @@ Afin de garantir la compatibilité des règles générées avec le programme Pic
 
 
 \subsubsection*{Numéro d’état valide}
- Le programme Picobot ne gère que 100 numéros d’état numérotés de 0 à 99 :
+ Le programme Picobot ne gère que cent numéros d’état numérotés de 0 à 99 :
 
 \begin{alloy}
 fact validState {
@@ -334,7 +336,7 @@ pred noMoveIntoAWall {
 \end{alloy}
 
 \subsubsection*{Règles inatteignables}
-Pour qu’une règle soit atteignable, il faut que son état initial soit accessible depuis une autre règle. Il faut donc, pour chaque règle dont l’état initial \textit{state} est différent de 0, qu’il existe une règle dont l’état initial est différent de \textit{state} qui exécute une action amenant à l’état \textit{state}. Il est important de noter que cette condition est nécessaire mais pas suffisante. Par exemple, dans un ensemble de trois règles dont les transformations d’état sont R1: 0 -> 0, R2: 1->2 et R3: 2->1, le prédicat est respecté mais les règles R2 et R3 sont inatteignables.
+Pour qu’une règle soit atteignable, il faut que son état initial soit accessible depuis une autre règle. Il faut donc, pour chaque règle dont l’état initial \textit{state} est différent de 0, qu’il existe une règle dont l’état initial est différent de \textit{state} qui exécute une action amenant à l’état \textit{state}. Il est important de noter que cette condition est nécessaire mais pas suffisante. Par exemple, dans un ensemble de trois règles dont les transformations d’état sont \texttt{R1: 0 -> 0, R2: 1->2} et \texttt{R3: 2->1}, le prédicat est respecté mais les règles R2 et R3 sont inatteignables.
 
 \begin{alloy}
 pred preventInaccessibleRule {
