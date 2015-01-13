@@ -135,6 +135,7 @@ Quentin BAILLEUL \  Jérémy BOSSUT \  Romain PHILIPPON
 
 \newpage
 
+\section{Introduction}
 
 Picobot\footnote{\label{pico_lien}\url{https://learn.cs.uml.edu/ext/picobot/}} est un projet utilisé comme support au cours introductoire d'informatique du Dr. Zachary Dodds au Harvey Mudd College de Californie. Ce programme modélise le comportement d’un robot-aspirateur dont le but est d’examiner tous les emplacements inoccupés de son environnement. Il est possible de programmer le robot en lui fournissant un ensemble de règles à respecter.
 \\
@@ -142,7 +143,7 @@ Picobot\footnote{\label{pico_lien}\url{https://learn.cs.uml.edu/ext/picobot/}} e
 Notre projet utilise le langage de spécification déclaratif Alloy pour générer ces règles. L'objectif est de chercher le plus petit ensemble de règles qui permet au robot de parcourir l’ensemble d’un niveau, quelque soit sa position initiale.
 \\
 
-La section suivante présente l’architecture du projet. Nous présentons le fonctionnement du programme Picobot en détails dans la section~\ref{sec:picobot} et les modèles Alloy utilisés dans la section ~\ref{sec:mod_alloy}. Les sections ~\ref{sec:result} et ~\ref{sec:ana_result} montrent respectivement les résultats obtenus et leur analyse. Enfin nous concluons notre travail dans la section ~\ref{sec:conclusion}.
+Nous présentons le fonctionnement du programme Picobot en détails dans la section~\ref{sec:picobot} et les modèles Alloy utilisés dans la section ~\ref{sec:mod_alloy}. Les sections ~\ref{sec:result} et ~\ref{sec:ana_result} montrent respectivement les résultats obtenus et leur analyse. Enfin nous concluons notre travail dans la section ~\ref{sec:conclusion}.
 
 
 \section{Picobot}
@@ -157,21 +158,22 @@ Pour se déplacer, le robot respecte un ensemble de règles pré-établies. Une 
 
 \textit{CurrentState} et \textit{NewState} sont deux nombres entiers compris entre 0 et 99. Ces nombres représentent le numéro de l’état dans lequel se trouve le robot respectivement avant et après l’exécution de la règle. Au lancement du programme, le robot se trouve dans l’état 0.
 \newpage
-\textit{Surroundings} est une chaîne de quatre caractères représentant l’occupation des cellules voisines. Les environnement possibles sont les suivants : 
+\textit{Surroundings} est une chaîne de quatre caractères représentant l’occupation des cellules voisines. Les environnements possibles sont les suivants : 
 
 
 \begin{figure}[H]
-\centering{
+\centerline{
 \includegraphics[scale=0.3]{pictures/Image0.png}}
+% Legende : 
+\caption{Environnements possibles du robot}
 \end{figure}
 
 Il est possible de remplacer un des caractères par ‘*’. Le caractère ‘*’ signifie qu’on ne se soucie pas de la présence ou non d’un obstacle à l’emplacement désigné.
 \vspace{5mm}
 
 \textit{MovementDirection} représente la direction dans laquelle on souhaite que le robot se déplace. Le robot peut se déplacer dans les quatre directions cardinales (N pour Nord, E pour Est, W pour Ouest, S pour Sud) ou choisir de ne pas bouger (X).
-\newline
-
-\textbf{Exemple} : Considérons l’ensemble de règles pour Picobot suivant.
+\\\\
+\noindent\textbf{Exemple} : Considérons l’ensemble de règles pour Picobot suivant.
 \begin{center}
 \texttt{0 x*** -> N 0\\
 0 N*** -> W 1\\
@@ -181,7 +183,7 @@ Il est possible de remplacer un des caractères par ‘*’. Le caractère ‘*�
 
 \begin{figure}[H]
  \centerline{\includegraphics[scale=0.45]{pictures/Image1.png}}
- 
+\caption{Représentation du robot Picobot (carré vert) parcourant un niveau en respectant les règles indiquées dans le champ Rules}
  \end{figure}
 
 La règle \texttt{0 x*** -> N 0} est suivie lorsque le robot est dans l'état 0 et qu'il détecte une cellule libre au Nord. Lorsque cette situation se produit, le robot se déplace d'une unité vers le Nord et reste à l'état 0. Lorsque le robot rencontre un obstacle au Nord, la règle \texttt{0 N*** -> W 1} change son état à 1 et le fait se déplacer vers l’Ouest. Une fois le robot dans l'état 1, il suit la règle règle \texttt{1 ***x -> S 1} et va se déplacer vers le Sud jusqu'à ce qu'il rencontre un mur dans cette direction. Dans ce cas, il revient à l'état 0 selon la règle \texttt{1 ***S -> X 0}.
@@ -189,20 +191,30 @@ La règle \texttt{0 x*** -> N 0} est suivie lorsque le robot est dans l'état 0 
 \section{Modèles Alloy}
 \label{sec:mod_alloy}
 Le caractère ‘*’ a été introduit dans le but d’obtenir une représentation plus succincte des règles. Pour tout ensemble de règles qui utilise ce caractère, il est alors possible de trouver un ensemble de règles équivalent qui ne l’utilise pas.
-%[Image Règles]
+
 
 \begin{figure}[H]
 \centering{\includegraphics[scale=0.7]{pictures/Image2.png}}
+\caption{Équivalence de deux ensembles de règles (version réduite à gauche, version complète à droite)}
 \end{figure}
 
 
 Dans cette section, nous présentons deux modèles Alloy - le premier sans ‘*’ et le second avec - qui permettent de générer des ensembles de règles pour Picobot.
 
 \subsection{Modèle original}
+\vspace{5mm}
+\begin{figure}[H]
+\centerline{
+\includegraphics[scale=0.6]{pictures/Image3.png}}
+\caption{Représentation schématique d'une instance solution générée par Alloy}
+\end{figure}
+
+\newpage
 \subsubsection{Ensembles}
 Le modèle comprend trois signatures et deux énumérations :
-\\
-
+\newline
+\begin{figure}[H]
+\advance\leftskip-1cm{
 \begin{tabular}{|M{5cm}|M{8cm}|}
     \hline
     \textbf{Ensemble} & \textbf{Description} \tabularnewline
@@ -239,16 +251,16 @@ enum Move {N, E, W, S, X}
 enum Wall {True, False}
 \end{alloyt}} & \textbf{Wall} est identique à l’ensemble des booléens et définit l’état d’un mur (présent: True, absent: False)\tabularnewline
     \hline
-
  \end{tabular}
-
+}
+\end{figure}
 \subsubsection{Faits}
 Afin de garantir la compatibilité des règles générées avec le programme Picobot, six faits sont utilisés : 
 
 
 \subsubsection*{Numéro d’état valide}
  Le programme Picobot ne gère que cent numéros d’état numérotés de 0 à 99 :
-
+\newpage
 \begin{alloy}
 fact validState {
   all r:Rule | r.current_state >= 0 && r.current_state < 100
@@ -368,6 +380,7 @@ fact compatibleRules {
 \end{alloy}
 
 \subsection{Comparaison des modèles}
+\centerline{
 \begin{tabular}{|M{6cm}|M{6cm}|}
     \hline
     \textbf{Modèle original} & \textbf{Modèle alternatif} \tabularnewline
@@ -382,11 +395,32 @@ fact compatibleRules {
 181326 variables, dont 4450 primaires et 480863 clauses. \tabularnewline
     \hline
     \end{tabular}
-
+}
+\vspace{5mm}
 \section{Résultats}
 \label{sec:result}
+
+Le projet simule le comportement de Picobot sur les niveaux suivants :
+%placer 2 images
+
+Sur ces deux niveaux, une simulation sur toutes les positions inoccupées sur l'ensemble des règles générées sur les deux modèles
+
+On considère que le modèle Alloy est lancé pour 25 instances d'objets au maximum
+
+Pour des raisons de performances, le programme se limite à la génération de 500 solutions pour chaque modèle Alloy
+
+    * Si c'est la couverture parcourue : \_coveringRate\_
+    * Si c'est le nombre moyen de cases parcourues : \_average-crossed-cells\_
+    * Si c'est le nombre de cas où le Picobot a parcouru ou non toute la map : \_nb-passed-failed-positions\_
+
 \section{Analyse des résultats}
 \label{sec:ana_result}
+
+C'est très complique de trouver de base un règle alloy qui fonctionne
+Pour trouver u solution simple pour la premiere c'est difficile alors pouyr un map plus complexe c'est plus compliqué
+
+-difference entre les deux modèles 
+-regarder les règle qui couvre plus si ielles ont le même patern, peut'on en déduire les meta-regles de Picobot
 \section{Conclusion}
 \label{sec:conclusion}
 
