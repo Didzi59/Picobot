@@ -12,7 +12,8 @@
 \usepackage{charter}
 \usepackage{array}
 \usepackage{here}
-
+\usepackage[justification=centering,singlelinecheck=false]{caption}
+\usepackage{subcaption}
 \newcolumntype{M}[1]{>{\raggedright}m{#1}}
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 
@@ -399,29 +400,125 @@ fact compatibleRules {
 \vspace{5mm}
 \section{Résultats}
 \label{sec:result}
-
 Le projet simule le comportement de Picobot sur les niveaux suivants :
-%placer 2 images
 
-Sur ces deux niveaux, une simulation sur toutes les positions inoccupées sur l'ensemble des règles générées sur les deux modèles
+\begin{figure}[H]
+\centering
+\begin{subfigure}{.4\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{pictures/ImageMap1.png}
+  \caption{Niveau Vide}
+\end{subfigure}%
+\begin{subfigure}{.4\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{pictures/ImageMap2.png}
+  \caption{Niveau labyrinthe}
+\end{subfigure}
+\caption{Exemples de niveaux}
+\end{figure}
 
-On considère que le modèle Alloy est lancé pour 25 instances d'objets au maximum
+Les deux modèles Alloy présentés dans la section précédente sont
+testés pour un nombre de 25 instances maximum par objet. Pour des
+raisons de performance, le programme se limite à la génération de 500
+solutions pour chaque modèle.
+\newpage
+Nous considérons qu'un ensemble de règles valide un niveau s'il le
+complète entièrement quelque soit la position initiale. Chaque
+ensemble de règles est alors testé sur toutes les positions inoccupées
+dans chacun des deux niveaux.\\
 
-Pour des raisons de performances, le programme se limite à la génération de 500 solutions pour chaque modèle Alloy
-
-    * Si c'est la couverture parcourue : \_coveringRate\_
-    * Si c'est le nombre moyen de cases parcourues : \_average-crossed-cells\_
-    * Si c'est le nombre de cas où le Picobot a parcouru ou non toute la map : \_nb-passed-failed-positions\_
+Trois types de résultats sont générés pour chaque ensemble de règles
+et pour chaque niveau : le nombre moyen de cases parcourues, la
+moyenne du taux de couverture et le nombre de positions initiales qui
+permettent à un ensemble de règles de compléter le niveau.
 
 \section{Analyse des résultats}
 \label{sec:ana_result}
 
-C'est très complique de trouver de base un règle alloy qui fonctionne
-Pour trouver u solution simple pour la premiere c'est difficile alors pouyr un map plus complexe c'est plus compliqué
+\subsection{Niveau vide}
 
--difference entre les deux modèles 
--regarder les règle qui couvre plus si ielles ont le même patern, peut'on en déduire les meta-regles de Picobot
+Le premier niveau contient 529 espaces inoccupés. A l’exception de 11
+ensembles de règles pour le modèle original et 8 pour le modèle
+alternatif, tous les ensembles analysés contiennent 4 règles et 2
+numéros d’état. Ce faible nombre de règles ne permet pas d’obtenir des
+résultats probants.
+
+\subsubsection{Modèle original}
+
+L’ensemble de règles le plus performant permet de parcourir en moyenne
+12 des 529 cases. Les 128 ensembles suivants en parcourt entre 9 et
+10. De plus, ces ensembles ne permettent de parcourir complètement un
+niveau pour aucune des positions initiales possibles.
+
+\subsubsection{Modèle alternatif}
+
+Deux ensembles de règles se distinguent en permettant de parcourir
+tout le niveau pour respectivement 42 et 21 positions
+initiales. Néanmoins, ces deux ensembles contiennent 25 règles et 4
+numéros d’état et le taux de couverture moyen obtenu pour le meilleur
+ensemble est de 7,9%.
+
+\newpage
+\subsection{Niveau labyrinthe}
+
+Ce niveau, bien que plus complexe, ne contient que 280 espaces
+inoccupés. Le modèle alternatif permet de générer un ensemble de
+règles qui parcourt tout le niveau dans 82 des 280 points de départ :
+
+\begin{center}
+\textit{
+3 xxxx -> N 0 ; \\
+3 xEWx -> N 0 ; \\
+3 xxWx -> X 0 ; \\
+3 NxWS -> X 0 ; \\
+3 xExx -> N 0 ; \\
+3 NE*x -> X 1 ; \\
+3 Nx*x -> X 0 ; \\
+3 NxxS -> X 0 ; \\
+3 xExS -> X 2 ; \\
+3 xxxS -> N 0 ; \\
+3 xEWS -> X 0 ; \\
+3 xxWS -> N 0 ; \\
+2 xxWS -> X 0 ; \\
+2 NExx -> X 3 ; \\
+2 Nxxx -> X 3 ; \\
+2 x*Wx -> X 0 ; \\
+1 x*Wx -> X 0 ; \\
+1 xx*S -> X 0 ; \\
+1 *EWS -> X 0 ; \\
+1 Nx*S -> X 0 ; \\
+0 xExS -> N 0 ; \\
+0 NExx -> X 2 ; \\
+0 Nxxx -> X 2 ; \\
+0 x*Wx -> X 1 ; \\
+0 *EWS -> N 0
+}
+\end{center}
+
+Tous les autres ensembles générés parcourent en moyenne moins de 2
+cellules.
+
+\subsection{Remarques}
+
+Bien que permettant la génération d’un nombre plus important
+d’environnements différents, le modèle alternatif est plus performant
+car il permet une plus grande liberté au robot pour un nombre de
+règles équivalent. On peut cependant regretter l’absence de découverte
+d’un ensemble de règles qui complète un niveau quelque soit la
+position initiale du robot. De plus, la non exhaustivité de l’ensemble
+des solutions analysées ne permet pas de s’assurer d’obtenir le
+meilleur résultat possible.
+
 \section{Conclusion}
 \label{sec:conclusion}
+Notre travail montre une preuve de concept de la recherche d’une
+solution optimale pour Picobot. Le manque de performance des machines
+utilisées n’a néanmoins pas permis d’obtenir une solution
+satisfaisante à la problématique posée. Plusieurs pistes
+d’amélioration s’ouvrent alors afin de maximiser les performances dont
+la simplification du modèle employé ou l’amélioration du filtrage
+préalable des ensembles de règles inadaptés. Il serait également
+intéressant de poursuivre cette analyse à la recherche d’un ensemble
+de règles qui valide plusieurs niveaux.
 
 \end{document}
